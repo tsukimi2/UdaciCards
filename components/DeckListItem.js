@@ -36,9 +36,7 @@ class DeckListItem extends Component {
 				is_edit: false,
 				id,
 				name,
-				num_cards,
-//				score,
-				setPage
+				num_cards
 			})
 		} else {
 			this.handleItemSelectionToggle(id)

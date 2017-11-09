@@ -19,6 +19,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "await-to-js": "^2.0.1",
     "expo": "^21.0.0",
     "immutability-helper": "^2.4.0",
     "native-base": "^2.3.3",

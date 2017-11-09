@@ -1,4 +1,11 @@
-import { UPDATE_ALL_DECKS_IS_SELECTED, UPDATE_DECK_IS_SELECTED, ADD_DECK, EDIT_DECK/*, UPDATE_DECK_SCORE, INCR_DECK_SCORE, DECR_DECK_SCORE */ } from './constants'
+import { SET_DECKS, UPDATE_ALL_DECKS_IS_SELECTED, UPDATE_DECK_IS_SELECTED, ADD_DECK, EDIT_DECK } from './constants'
+
+export function setDecks(decks) {
+	return {
+		type: SET_DECKS,
+		decks
+	}
+}
 
 export function updateAllDecksIsSelected(is_selected) {
 	return {
@@ -28,28 +35,3 @@ export function editDeck(deck) {
 		deck
 	}
 }
-
-/*
-export function updateDeckScore(id, score, num_cards_ans) {
-	return {
-		type: UPDATE_DECK_SCORE,
-		id,
-		score,
-		num_cards_ans
-	}
-}
-
-export function incrDeckScore(id) {
-	return {
-		type: INCR_DECK_SCORE,
-		id
-	}
-}
-
-export function decrDeckScore(id) {
-	return {
-		type: DECR_DECK_SCORE,
-		id
-	}
-}
-*/

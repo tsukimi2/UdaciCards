@@ -1,17 +1,23 @@
 import { connect } from 'react-redux'
+import { addCard } from '../actions/cards'
 import MyEditCard from '../components/MyEditCard'
 
 const mapStateToProps = (state, ownProps) => {
-	const { is_new } = ownProps.navigation.state.params
+	const { navigation } = ownProps
+	const { is_new, deck_id } = ownProps.navigation.state.params
 
 	return {
-		is_new
+		navigation,
+		is_new,
+		deck_id
 	}
 }
 
 const mapDispatchToProps = dispatch => {
 	return {
-
+		addCard: (deck_id, card) => {
+			dispatch(addCard(deck_id, card))
+		}
 	}
 }
 

@@ -20,7 +20,7 @@ class MyFabsBar extends Component {
 		this.props.onEdit()
 	}
 
-	handleDelete() {
+	handleDelete() {	
 		this.props.onDelete()
 	}
 
@@ -70,7 +70,7 @@ class MyFabsBar extends Component {
 					</View>
 				)
 			}
-		} else if(page.val === Global.PAGE.DECK.val) {
+		} else if(page.val === Global.PAGE.DECK.val || page.val === Global.PAGE.DECK_SWIPER.val) {
 			return(
 				<View style={{ flex: 1 }}>
 					<Fab

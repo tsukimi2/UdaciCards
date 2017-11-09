@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import {subscribe} from 'redux-subscriber'
-import update from 'immutability-helper'
 import PropTypes from 'prop-types'
 import { Container, Content, Card, CardItem, Body, View, Text } from 'native-base'
 import * as Global from '../utils/Global'
+import * as Api from '../utils/api'
 import DeckListItem from './DeckListItem'
 import MyFabsBarContainer from '../containers/MyFabsBarContainer'
+
 
 class DeckList extends Component {
   constructor() {
@@ -19,6 +20,15 @@ class DeckList extends Component {
   }
 
   componentWillMount() {
+//    Api.deleteAllDecks()   
+    Api.getDecks((err, data) => {
+      if(err) {
+        // ToDo:
+      } else {
+        this.props.setDecks(data)
+      }
+    })   
+
     this.props.setPage({ val: Global.PAGE.DEFAULT.val, title: '' })
 
     this.unsubsribe_state_mark_decks_delete_flag = subscribe('signal_flags.decks_delete_flag', state => {
@@ -55,10 +65,8 @@ class DeckList extends Component {
       is_edit: true,
       id: Global.NEW,
       name: '',
-      num_cards: 0,
- //     score: 0,
-//      setPage: this.props.setPage
-    })         
+      num_cards: 0
+    })        
   }
 
   onItemSelected(id) {

@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import {
 	setPage,
+	setDecks,
 	showContextMenu,
 	hideContextMenu,
 	updateAllDecksIsSelected,
@@ -12,14 +13,14 @@ import {
 } from '../actions'
 import DeckList from '../components/DeckList'
 
-const mapStateToProps = state => {
+const mapStateToProps = state => {	
 	return {		
 		decks: state.decks.map(deck => ({
 			id: deck.id,
 			name: deck.name,
 			num_cards: deck.cards.length,
 			score: deck.score,
-			is_selected: deck.is_selected
+			is_selected: typeof deck.is_selected !== 'undefined' ? deck.is_selected : false
 		}))
 	}
 }
@@ -28,6 +29,9 @@ const mapDispatchToProps = dispatch => {
 	return {
 		setPage: page => {
 			dispatch(setPage(page))
+		},
+		setDecks: decks => {
+			dispatch(setDecks(decks))
 		},
 		showContextMenu: () => {
 			dispatch(showContextMenu())

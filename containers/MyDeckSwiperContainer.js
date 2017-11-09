@@ -1,11 +1,12 @@
 import { connect } from 'react-redux'
-import { setPage/*, updateDeckScore */ } from '../actions'
+import { setPage, deleteCard } from '../actions'
 import MyDeckSwiper from '../components/MyDeckSwiper'
 
 const mapStateToProps = (state, ownProps) => {
 	const { id, callbacks } = ownProps.navigation.state.params	
 	const selected_deck = state.decks.filter(deck => id === deck.id)
-	
+console.log('selected_deck')
+console.log(selected_deck)	
 	return {
 		id,
 		navigation: ownProps.navigation,
@@ -14,12 +15,9 @@ const mapStateToProps = (state, ownProps) => {
 			index: card.index,
 			question: card.question,
 			ans: card.ans,
-			is_correct: typeof card.is_correct !== 'undefined' ? card.is_correct : null
+//			is_correct: typeof card.is_correct !== 'undefined' ? card.is_correct : null
 		})),
-		deck_name: selected_deck.length === 0 ? '' : selected_deck[0].name,
-//		score: selected_deck.length === 0 ? 0 : selected_deck[0].score,
-//		num_cards_ans: selected_deck.length === 0 ? 0 : selected_deck[0].num_cards_ans,
-//		callbacks: callbacks
+		deck_name: selected_deck.length === 0 ? '' : selected_deck[0].name
 	}
 }
 
@@ -27,6 +25,9 @@ const mapDispatchToProps = dispatch => {
 	return {		
 		setPage: page => {
 			dispatch(setPage(page))
+		},
+		deleteCard: (deck_id) => {
+			dispatch(deleteCard(deck_id))
 		}
 	}
 }

@@ -4,6 +4,7 @@ import { Container } from 'native-base'
 import { StackNavigator, addNavigationHelpers } from "react-navigation";
 import Routes from "../config/routes"
 import configureStore from '../configureStore'
+import * as Notify from '../utils/Notify'
 
 const AppNavigator = StackNavigator(Routes)
 
@@ -18,6 +19,10 @@ const store = configureStore(navReducer)
     nav: state.nav
 }))
 class AppWithNavigationState extends Component {
+    componentDidMount() {
+        Notify.setLocalNotification(8, 0)
+    }
+
     render() {
         return (
             <AppNavigator

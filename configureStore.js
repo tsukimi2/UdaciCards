@@ -4,6 +4,7 @@ import getRootReducer  from './reducers'
 import screenTracking from './middleware/screenTracking'
 import * as Global from './utils/Global'
 
+/*
 const init_state = {
 	ui: {
 		showDeleteBtn: false,
@@ -49,6 +50,26 @@ const init_state = {
 //		num_cards_ans: 0
 	}]
 }
+*/
+
+
+const init_state = {
+	ui: {
+		showDeleteBtn: false,
+		showEditBtn: false
+	},
+	page: {
+		val: Global.PAGE.DEFAULT.val,
+		title: Global.PAGE.DEFAULT.title,
+		show_context_menu: false
+	},
+	signal_flags: {
+		decks_delete_flag: false,
+		deck_edit_flag: false
+	},
+	decks: []
+}
+
 
 const configureStore = (navReducer) => {
 	const store = createStore(getRootReducer(navReducer), init_state, applyMiddleware(screenTracking))

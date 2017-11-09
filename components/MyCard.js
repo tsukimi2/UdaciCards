@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Card, CardItem, View, Text, Left, Body, Button } from 'native-base'
 import FAIcon from 'react-native-vector-icons/FontAwesome'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
+import * as Global from '../utils/Global'
 
 
 class MyCard extends Component {
@@ -19,11 +20,11 @@ class MyCard extends Component {
 
 		// check answer with state
 		if(ans === correct_ans) {
-			this.props.callbacks.incrDeckScore()
 			this.setState({ is_correct: true, show_ans: true })
+			this.props.callbacks.incrDeckScore()
 		} else {
-			this.props.callbacks.decrDeckScore()
 			this.setState({ is_correct: false, show_ans: true })
+			this.props.callbacks.decrDeckScore()
 		}
 
 
@@ -55,9 +56,10 @@ class MyCard extends Component {
 	}
 	
 	render() {
-		const { deck_name, is_new, is_edit, id, question, ans, card_num, score, num_cards, num_cards_ans } = this.props
+		const { deck_name, id, question, ans, card_num, score, num_cards, num_cards_ans } = this.props
 		const { show_ans, is_correct } = this.state
-	
+		const anstxt = this.renderAnsTxt(show_ans, ans, is_correct)
+
 		return(
 			<Card style={styles.card}>
 				<CardItem>
@@ -70,7 +72,7 @@ class MyCard extends Component {
 				<CardItem cardBody>
 					<View padder style={styles.card_body}>
 						<Text>{question}</Text>
-						{ this.renderAnsTxt(show_ans, ans, is_correct) }
+						{ anstxt }
 					</View>
 					{
 						!show_ans && (
@@ -124,9 +126,7 @@ const styles = {
 	}
 }
 
-MyCard.propTypes = {	
-//	is_new: PropTypes.boolean.isRequired,
-//	is_edit: PropTypes.boolean.isRequired,
+MyCard.propTypes = {
 	id: PropTypes.string.isRequired,
 	question: PropTypes.string.isRequired,
 	ans: PropTypes.bool.isRequired,

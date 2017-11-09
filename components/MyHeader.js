@@ -5,6 +5,7 @@ import { Text, StyleSheet } from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import FAIcon from 'react-native-vector-icons/FontAwesome'
 import * as Global from '../utils/Global'
+import * as Api from '../utils/api'
 
 function goBack(navigation) {
 	navigation.goBack()
@@ -32,6 +33,26 @@ function handleEditClick(state, curr_route_name, navigation, setHeaderBtnVisibil
 	}
 }
 
+function handleDeleteClick(onDeleteClick, state, curr_route_name) {
+console.log('handleDeleteClick')	
+	if(curr_route_name === Global.PAGE.DEFAULT.val) {
+		const delete_index = state.decks.findIndex(deck => deck.is_selected === true)
+		if(delete_index !== -1) {
+			const { id } = state.decks[delete_index]
+
+			onDeleteClick(curr_route_name)
+
+			Api.deleteDeck(id, err => {
+console.log('err')
+console.log(err)				
+				if(err) {
+					// ToDo: revert redux store and notify user
+				}
+			})
+		}
+	}
+}
+
 const MyHeader = ({
 	state,
 	title,
@@ -51,7 +72,7 @@ const MyHeader = ({
 
 			return (
 				<Right>
-					<FAIcon name="trash" size={25} onPress={onDeleteClick.bind(this, curr_route_name)} />
+					<FAIcon name="trash" size={25} onPress={handleDeleteClick.bind(this, onDeleteClick, state, curr_route_name)} />
 					<Text> </Text>
 					<FAIcon
 						name="edit"

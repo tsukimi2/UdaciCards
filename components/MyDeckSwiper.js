@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Container, Header, Content, View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Icon, Button } from 'native-base'
 import MyFabsBarContainer from '../containers/MyFabsBarContainer'
 import MyCard from './MyCard'
+import * as Global from '../utils/Global'
 
 class MyDeckSwiper extends Component {
 	constructor() {
@@ -13,10 +14,12 @@ class MyDeckSwiper extends Component {
 		}		
 	}
 
-	handleIncrDeckScore() {		
-		//const { id } = this.props
-		//this.props.incrDeckScore(id)
+	componentWillMount() {
+		const { deck_name } = this.props
+		this.props.setPage({ val: Global.PAGE.DECK_SWIPER.val, title: deck_name })
+	}		
 
+	handleIncrDeckScore() {
 		const num_cards = this.props.cards.length
 		const  { score, num_cards_ans } = this.state
 
@@ -26,10 +29,7 @@ class MyDeckSwiper extends Component {
 		})
 	}
 
-	handleDecrDeckScore() {	
-		//const { id } = this.props
-		//this.props.decrDeckScore(id)
-
+	handleDecrDeckScore() {
 		const num_cards = this.props.cards.length
 		const  { score, num_cards_ans } = this.state
 
@@ -53,14 +53,22 @@ console.log('edit card')
 
 	deleteCard() {
 console.log('delete card')
+//		this.props.deleteCard()
 	}
 
-	renderSwipeButtons() {
+	restartQuiz() {
+		const { id } = this.props
+		this.props.navigation.navigate("MyDeckSwiper", {
+			id	
+		})
+	}
+
+	handleSwipeRight() {
 
 	}
 
 	render() {
-		const { navigation, cards, deck_name, /* score, num_cards_ans, */ incrDeckScore, decrDeckScore } = this.props
+		const { navigation, cards, deck_name, incrDeckScore, decrDeckScore } = this.props
 		const { score, num_cards_ans } = this.state
 
 		return(
@@ -75,7 +83,10 @@ console.log('delete card')
 								return(
 									<View style={styles.empty_container}>
 										<Text>Quiz completed!</Text>
-										<Text>Your score is {score} / {cards.length - 1}</Text>
+										<Text>Your score is {score} / {cards.length}</Text>
+										<Button onPress={this.restartQuiz.bind(this)}>
+											<Text>Restart Quiz</Text>
+										</Button>
 									</View>
 								)
 							} else {
@@ -92,7 +103,6 @@ console.log('delete card')
 
 							return(
 								<MyCard
-									key={id}
 									card_num={card.index}
 									score={score}
 									num_cards={cards.length}
@@ -106,6 +116,7 @@ console.log('delete card')
 								/>
 							)
 						}}
+						onSwipeRight={this.handleSwipeRight.bind(this)}
 					/>
 				</Content>			
 		        <MyFabsBarContainer
@@ -154,6 +165,9 @@ const styles = {
 }
 
 MyDeckSwiper.propTypes = {
+	id: PropTypes.string.isRequired,
+	deck_name: PropTypes.string.isRequired,
+	navigation: PropTypes.object.isRequired,
 	cards: PropTypes.arrayOf(
 		PropTypes.shape({
 			id: PropTypes.string.isRequired,
@@ -162,7 +176,7 @@ MyDeckSwiper.propTypes = {
 			ans: PropTypes.bool.isRequired
 		})
 	),
-//	setPage: PropTypes.func.isRequired,
+	setPage: PropTypes.func.isRequired,
 	callbacks: PropTypes.shape({
 		incrDeckScore: PropTypes.func.isRequired,
 		decrDeckScore: PropTypes.func.isRequired

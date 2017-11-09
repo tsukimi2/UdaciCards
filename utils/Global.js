@@ -1,3 +1,5 @@
+export const DECKS_STORAGE_KEY = 'DECKS_STORAGE_KEY'
+
 export const PAGE = {
 	DEFAULT: {
 		val: 'DeckList',
@@ -5,6 +7,14 @@ export const PAGE = {
 	},
 	DECK: {
 		val: 'Deck',
+		title: ''
+	},
+	DECK_SWIPER: {
+		val: 'MyDeckSwiper',
+		title: '',
+	},
+	CARD: {
+		val: 'MyCard',
 		title: ''
 	}
 };

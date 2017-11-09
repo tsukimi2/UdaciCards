@@ -2,7 +2,9 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import { Container, Content, Card, CardItem, Button, Body, Text, Footer, Form, Input, Item, Left, View, Grid, Col } from 'native-base'
 import { TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+var uuid = require('uuid-v4')
 import * as Global from '../utils/Global'
+import * as Api from '../utils/api'
 import FAIcon from 'react-native-vector-icons/FontAwesome'
 import MyFabsBarContainer from '../containers/MyFabsBarContainer'
 
@@ -41,29 +43,58 @@ class Deck extends Component {
 
 	startQuiz(id) {
 		this.props.navigation.navigate("MyDeckSwiper", {
-			id			
+			id	
 		})
 	}
 
-	saveDeck() {
+	saveDeck() {	
 		// save deck
 		const { id, name } = this.state
 
 		if(id === Global.NEW) {
+			const new_id = uuid()
+
 			this.props.addDeck({
-				id,
+				id: new_id,
 				name
 			})
+
+			Api.saveDeckTitle({
+				is_new: true,
+				id: new_id,
+				title: name
+			}, (err, data) => {			
+				if(err) {
+					// ToDo: revert redux add deck and notify user of err
+				} else {
+					// go back to decklist
+					this.props.navigation.navigate("Deck", {
+						is_edit: false,
+						id: new_id,
+						name,
+						num_cards: 0
+					})				
+				}
+			})			
 		} else {
 			this.props.editDeck({
 				id,
 				name
 			})
-		}
 
-		// if successful, go back to decklist.
-		// ToDo: If not, notify user of error
-		this.props.navigation.navigate("DeckList")	
+			Api.saveDeckTitle({
+				is_new: false,
+				id,
+				title: name
+			}, (err, data) => {			
+				if(err) {
+					// ToDo: revert redux add deck and notify user of err
+				} else {
+					// go back to decklist
+					this.props.navigation.navigate("DeckList")
+				}
+			})
+		}
 	}
 
 	gotoAddDeckForm() {
@@ -80,21 +111,26 @@ class Deck extends Component {
 		this.setState({ is_edit: true })
 	}
 
-	gotoAddCardForm() {
+	gotoAddCardForm(deck_id) {
 		this.props.navigation.navigate("EditCard", {
-			is_new: true
+			is_new: true,
+			deck_id
 		})
 	}
 
-	deleteDeck() {
-		const { navigation } = this.props
-
+	deleteDeck() {		
+		const { navigation, id } = this.props
 		const curr_route_name = Global.getCurrentRouteName(navigation.state)
 		this.props.deleteDeck(curr_route_name, this.state.id)
 
-		// if successful, go back to decklist.
-		// ToDo: If not, notify user of error
-		this.props.navigation.navigate("DeckList")
+		Api.deleteDeck(id, err => {			
+			if(!err) {
+				// ToDo: Revert redux state and notify user
+			} else {
+				// go back to decklist
+				this.props.navigation.navigate("DeckList")
+			}
+		})
 	}
 
 	render() {
@@ -143,7 +179,7 @@ class Deck extends Component {
 												</Button>
 											)
 										}
-										<Button style={styles.card_button} onPress={this.gotoAddCardForm.bind(this)}>
+										<Button style={styles.card_button} onPress={this.gotoAddCardForm.bind(this, id)}>
 											<Text>Add Card</Text>
 										</Button>									
 									</View>
@@ -210,11 +246,7 @@ Deck.propTypes = {
 	id: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	num_cards: PropTypes.number.isRequired,
-//	score: PropTypes.number.isRequired,
-	setPage: PropTypes.func.isRequired,
-//	updateDeckScore: PropTypes.func.isRequired,
-//	incrDeckScore: PropTypes.func.isRequired,
-//	decrDeckScore: PropTypes.func.isRequired
+	setPage: PropTypes.func.isRequired
 }
 
 export default Deck

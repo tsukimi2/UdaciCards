@@ -1,4 +1,5 @@
 import {
+	SET_DECKS,
 	UPDATE_ALL_DECKS_IS_SELECTED,
 	UPDATE_DECK_IS_SELECTED,
 	DELETE_DECKITEMS,
@@ -6,20 +7,20 @@ import {
 	ADD_DECK,
 	EDIT_DECK,
 	DELETE_DECK,
-//	UPDATE_DECK_SCORE,
-//	INCR_DECK_SCORE,
-//	DECR_DECK_SCORE
+	ADD_CARD,
+	EDIT_CARD,
+	DELETE_CARD
 } from '../actions/constants'
 import update from 'immutability-helper'
 var uuid = require('uuid-v4')
 import * as Global from '../utils/Global'
 
 function decks(state=[], action) {
-//console.log('state')
-//console.log(state)
-//console.log('action')
-//console.log(action)	
 	switch(action.type) {
+		case SET_DECKS:
+		{
+			return action.decks
+		}
 		case UPDATE_ALL_DECKS_IS_SELECTED:
 		{
 			const new_state = state.map(deck => ({
@@ -119,36 +120,22 @@ function decks(state=[], action) {
 			// ToDo: return error
 			return state
 		}
-/*		
-		case UPDATE_DECK_SCORE:
+		case ADD_CARD:
 		{
-			const { id, score, num_cards_ans } = action
-			const index = state.findIndex(deck => deck.id === id)
+			const { deck_id, card } = action			
+			const deck_index = state.findIndex(deck => deck.id === deck_id)
 
-			if(index !== -1) {
-				const new_state = update(state, {
-					[index]: {
-						score: { $set: score },
-						num_cards_ans: { $set: num_cards_ans }
-					}
-				})
-
-				return new_state
-			}
-
-			// ToDo: return error
-			return state
-		}		
-		case INCR_DECK_SCORE:
-		{		
-			const { id } = action
-
-			const index = state.findIndex(deck => deck.id === id)		
-			if(index !== 1) {
-				const new_state = update(state, {
-					[index]: {
-						score: { $apply: x => x + 1 },
-						num_cards_ans: { $apply: x => x + 1 }
+			if(deck_index !== -1) {
+				const new_state =  update(state, {
+					[deck_index]: {
+						cards: {
+							$push: [{
+								id: card.id,
+								index: state[deck_index].cards.length + 1,
+								question: card.question,
+								ans: card.ans
+							}]
+						}
 					}
 				})
 
@@ -157,30 +144,59 @@ function decks(state=[], action) {
 
 			return state
 		}
-		case DECR_DECK_SCORE:
-		{		
-			const { id } = action
+		case EDIT_CARD:
+		{
+			const { deck_id, card } = action
+			const deck_index = state.findIndex(deck => deck.id === deck_id)
 
-			const index = state.findIndex(deck => deck.id === id)
-			if(index !== 1) {
-				const new_state = update(state, {
-					[index]: {
-						score: { $apply: x => {
-							const z = x - 1
-							return z > 0 ? z : 0
-						} },
-						num_cards_ans: { $apply: x => x + 1 }
-					}
-				})
-
-				return new_state
+			if(deck_index === -1) {
+				return state
 			}
 
-			return state			
+			const card_index = state[deck_index].cards.findIndex(curr_card => curr_card.id === card.id)
+			if(card_index === -1) {
+				return state
+			}
+
+			const new_state = update(state, {
+				[deck_index]: {
+					cards: {
+						[card_index]: {
+							$set: {
+								question: card.question,
+								ans: card.ans
+							}
+						}
+					}
+				}
+			})
+
+			return new_state
 		}
-*/
-		case DELETE_DECKS:
-			return state
+		case DELETE_CARD:
+		{
+			const { deck_id, card } = action
+			const deck_index = state.findIndex(deck => deck.id === deck_id)
+
+			if(deck_index === -1) {
+				return state
+			}
+
+			const card_index = state[deck_index].cards.findIndex(curr_card => curr_card.id === card.id)
+			if(card_index === -1) {
+				return state
+			}
+
+			const new_state = update(state, {
+				[deck_index]: {
+					cards: {
+						$splice: [ card_index, 1 ]
+					}
+				}
+			})
+
+			return new_state
+		}
 		default:
 			return state
 	}
